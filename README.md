@@ -1,4 +1,4 @@
-# Competitor Intelligence Platform
+# VentureIntel
 
 > Type a company name, walk away. Come back to a structured competitive intelligence report — sourced, verified, and exported to PDF — generated entirely by a local AI with no cloud LLM required.
 
