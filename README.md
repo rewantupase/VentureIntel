@@ -26,6 +26,47 @@ You can also open the chat interface and ask follow-up questions against the col
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    user[Analyst\nbrowser]
+
+    subgraph docker[Docker Compose]
+        subgraph frontend[Frontend]
+            fe[React\nNginx]
+        end
+        subgraph backend[Backend]
+            api[FastAPI\nLangGraph]
+            celery[Celery\nworker]
+        end
+        subgraph infra[Infrastructure]
+            pg[(Postgres\nsessions + reports)]
+            redis[(Redis\ntask queue)]
+            chroma[(ChromaDB\nvector store)]
+            ollama[Ollama\nPhi-3 LLM + BGE-M3]
+        end
+        subgraph monitoring[Monitoring]
+            prom[Prometheus]
+            grafana[Grafana]
+        end
+    end
+
+    mcp[MCP tools\nBrave · Tavily · Reddit\nNewsAPI · GitHub · Firecrawl]
+
+    user -->|research request| fe
+    fe -->|REST + stream| api
+    api -->|enqueue job| redis
+    redis -->|dequeue| celery
+    api -->|read/write| pg
+    celery -->|read/write| pg
+    celery -->|embed + search| chroma
+    celery -->|generate| ollama
+    api -->|hybrid RAG| chroma
+    api -->|chat generate| ollama
+    celery -->|fetch evidence| mcp
+    api -->|metrics| prom
+    prom --> grafana
+    fe -->|streamed report + chat| user
+```
 The system has two diagrams worth understanding. First, how the services fit together:
 
 ```
