@@ -8,22 +8,6 @@ Everything runs locally via Ollama + Phi-3. No OpenAI. No Anthropic. Your data s
 
 ---
 
-## What it actually does
-
-**Evidence collection first** — before any agent writes a single sentence, the platform fans out six MCP-wrapped data tools simultaneously: Brave Search, Tavily deep search, NewsAPI, Reddit, GitHub, and Firecrawl website scraping. All six run in parallel. The raw text gets embedded with BGE-M3 and stored in ChromaDB as vector chunks.
-
-**Three agents run in parallel** — Research (general company overview), Competitor Discovery (who are the actual rivals?), and Risk Analysis (six risk categories scored by severity). They all query ChromaDB using hybrid retrieval: dense vector search blended with BM25 keyword scoring, then fused with RRF.
-
-**Competitor Analysis runs next** — armed with the names discovered in the previous step, this agent does a dedicated deep-dive on each rival: product differences, pricing signals, team signals, strategic positioning.
-
-**Verification is deterministic — no LLM involved** — every factual claim gets cross-checked algorithmically using RapidFuzz fuzzy matching. A claim only passes if it appears in two or more independent sources. The confidence score formula is transparent and reproducible: `(source_count / max_sources) × avg_credibility / 10 × similarity_avg`. Nothing is trusted on the word of a single source.
-
-**The Report Agent assembles everything** — Phi-3 writes the executive summary and key conclusions, a Jinja2 template renders the full HTML report, WeasyPrint converts it to a downloadable PDF.
-
-You can also open the chat interface and ask follow-up questions against the collected evidence — it uses the same hybrid retrieval pipeline, streamed back token by token.
-
----
-
 # VentureIntel — Complete System Architecture
 
 ## 1. Architecture Overview
